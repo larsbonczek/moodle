@@ -138,10 +138,11 @@ abstract class WriterAbstract implements WriterInterface
          * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition
          */
         $this->globalFunctionsHelper->header('Content-Type: ' . static::$headerContentType);
+        // URL-encode filename. Fixes MDL-73624.
         $this->globalFunctionsHelper->header(
             'Content-Disposition: attachment; ' .
-            'filename="' . rawurldecode($this->outputFilePath) . '"; ' .
-            'filename*=UTF-8\'\'' . rawurldecode($this->outputFilePath)
+            'filename="' . rawurlencode($this->outputFilePath) . '"; ' .
+            'filename*=UTF-8\'\'' . rawurlencode($this->outputFilePath)
         );
 
         /*
