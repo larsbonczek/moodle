@@ -10,16 +10,32 @@ Feature: Verify activity visibility interface.
       | shortname        | C1       |
       | category         | 0        |
       | numsections      | 3        |
+    Given the following "course" exists:
+      | fullname         | Course 2 |
+      | shortname        | C2       |
+      | category         | 0        |
+      | numsections      | 3        |
     And the following "activities" exist:
       | activity | name              | intro                       | course | idnumber | section | visible |
       | assign   | Activity sample 1 | Test assignment description | C1     | sample1  | 1       | 1       |
       | assign   | Activity sample 2 | Test assignment description | C1     | sample2  | 1       | 0       |
+      | assign   | Activity sample 3 | Test assignment description | C1     | sample3  | 1       | 1       |
+      | assign   | Activity sample 4 | Test assignment description | C2     | sample4  | 1       | 1       |
     And the following "users" exist:
-      | username | firstname | lastname | email                |
-      | teacher1 | Teacher   | 1        | teacher1@example.com |
+      | username           | firstname             | lastname | email                          |
+      | teacher1           | Teacher               | 1        | teacher1@example.com           |
+      | noneditingteacher1 | Non-Editing Teacher   | 1        | noneditingteacher1@example.com |
+      | student1           | Student               | 1        | student1@example.com           |
     And the following "course enrolments" exist:
-      | user     | course | role           |
-      | teacher1 | C1     | editingteacher |
+      | user               | course | role           |
+      | teacher1           | C1     | editingteacher |
+      | teacher1           | C2     | editingteacher |
+      | noneditingteacher1 | C1     | teacher        |
+      | noneditingteacher1 | C2     | teacher        |
+      | student1           | C1     | student        |
+    And the following "permission overrides" exist:
+      | capability                             | permission | role    | contextlevel | reference |
+      | moodle/course:displaystealthactivities | Prohibit   | teacher | Course       | C2        |
     Given I am on the "C1" "Course" page logged in as "teacher1"
     And I turn editing mode on
 
@@ -74,3 +90,34 @@ Feature: Verify activity visibility interface.
     And I reload the page
     And I click on "Hidden from students" "button" in the "Activity sample 2" "core_courseformat > Activity visibility"
     Then I should see "Make available but don't show on course page" in the "Activity sample 2" "core_courseformat > Activity visibility"
+
+  @javascript
+  Scenario: Student cannot see stealth activities on course page.
+    Given the following config values are set as admin:
+      | allowstealth | 1 |
+    And I reload the page
+    And I open "Activity sample 3" actions menu
+    And I choose "Availability > Make available but don't show on course page" in the open action menu
+    When I am on the "C1" "Course" page logged in as "student1"
+    Then I should not see "Activity sample 3"
+
+  @javascript
+  Scenario: Non-editing teacher can see stealth activities on course page.
+    Given the following config values are set as admin:
+      | allowstealth | 1 |
+    And I reload the page
+    And I open "Activity sample 3" actions menu
+    And I choose "Availability > Make available but don't show on course page" in the open action menu
+    When I am on the "C1" "Course" page logged in as "noneditingteacher1"
+    Then I should see "Activity sample 3"
+
+  @javascript
+  Scenario: Non-editing teacher cannot see stealth activities on course page without the respective permission.
+    Given the following config values are set as admin:
+      | allowstealth | 1 |
+    And I am on the "C2" "Course" page logged in as "teacher1"
+    And I turn editing mode on
+    And I open "Activity sample 4" actions menu
+    And I choose "Availability > Make available but don't show on course page" in the open action menu
+    When I am on the "C2" "Course" page logged in as "noneditingteacher1"
+    Then I should not see "Activity sample 4"

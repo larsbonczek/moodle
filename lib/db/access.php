@@ -1004,6 +1004,18 @@ $capabilities = array(
         )
     ),
 
+    'moodle/course:displaystealthactivities' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/course:viewhiddenactivities'
+    ),
+
     'moodle/course:viewparticipants' => array(
 
         'captype' => 'read',

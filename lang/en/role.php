@@ -207,6 +207,7 @@ $string['course:useremail'] = 'Enable/disable email address';
 $string['course:view'] = 'View courses without participation';
 $string['course:viewcoursegrades'] = 'View course grades';
 $string['course:viewhiddenactivities'] = 'View hidden activities';
+$string['course:displaystealthactivities'] = 'Always display links to stealth activities';
 $string['course:viewhiddencourses'] = 'View hidden courses';
 $string['course:viewhiddengroups'] = 'View hidden groups';
 $string['course:viewhiddensections'] = 'View hidden sections';
