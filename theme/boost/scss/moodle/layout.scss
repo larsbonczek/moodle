@@ -233,6 +233,9 @@
             .jsenabled & .btn-footer-communication {
                 right: calc(#{$drawer-right-width} + 2rem);
             }
+            .jsenabled:has(&) .maintenancewarning {
+                right: calc(#{$drawer-right-width} + 5rem);
+            }
         }
         &.show-drawer-left.show-drawer-right {
             margin-left: $drawer-left-width;

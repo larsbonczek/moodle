@@ -50,7 +50,8 @@ $drawer-bg: darken($body-bg, 5%) !default;
     }
     .jsenabled .popover-process-monitor,
     .jsenabled .btn-footer-popover,
-    .jsenabled .btn-footer-communication {
+    .jsenabled .btn-footer-communication,
+    .jsenabled .maintenancewarning {
         @include transition(0.2s);
     }
 }

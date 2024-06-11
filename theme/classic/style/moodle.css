@@ -26888,7 +26888,7 @@ body.behat-site .action-menu .dropdown-subpanel-content.show {
 .maintenancewarning {
   position: fixed;
   bottom: 0;
-  right: 0;
+  right: 5rem;
   overflow: hidden;
   z-index: 1000;
 }
@@ -30017,14 +30017,16 @@ span.editinstructions .alert-link {
   }
   .jsenabled .popover-process-monitor,
   .jsenabled .btn-footer-popover,
-  .jsenabled .btn-footer-communication {
+  .jsenabled .btn-footer-communication,
+  .jsenabled .maintenancewarning {
     transition: 0.2s;
   }
 }
 @media (min-width: 576px) and (prefers-reduced-motion: reduce) {
   .jsenabled .popover-process-monitor,
   .jsenabled .btn-footer-popover,
-  .jsenabled .btn-footer-communication {
+  .jsenabled .btn-footer-communication,
+  .jsenabled .maintenancewarning {
     transition: none;
   }
 }
@@ -37109,6 +37111,9 @@ span[data-flexitour=container][x-placement=right] div[data-role=arrow]:after, sp
   }
   .jsenabled #page.drawers.show-drawer-right .popover-process-monitor, .jsenabled #page.drawers.show-drawer-right .btn-footer-popover, .jsenabled #page.drawers.show-drawer-right .btn-footer-communication {
     right: calc(315px + 2rem);
+  }
+  .jsenabled:has(#page.drawers.show-drawer-right) .maintenancewarning {
+    right: calc(315px + 5rem);
   }
 }
 @media (min-width: 992px) {
