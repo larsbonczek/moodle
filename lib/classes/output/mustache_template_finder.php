@@ -44,9 +44,10 @@ class mustache_template_finder {
      *
      * @param string $component The component to search
      * @param string $themename The current theme name
+     * @param bool $ignorethemes Whether to ignore theme template directories
      * @return string[] List of valid directories for templates for this compoonent. Directories are not checked for existence.
      */
-    public static function get_template_directories_for_component($component, $themename = '') {
+    public static function get_template_directories_for_component($component, $themename = '', $ignorethemes = false) {
         global $CFG, $PAGE;
 
         // Default the param.
@@ -65,26 +66,28 @@ class mustache_template_finder {
             throw new coding_exception("Component was not valid: " . s($component));
         }
 
-        // Find the parent themes.
-        $parents = array();
-        if ($themename === $PAGE->theme->name) {
-            $parents = $PAGE->theme->parents;
-        } else {
-            $themeconfig = theme_config::load($themename);
-            $parents = $themeconfig->parents;
-        }
+        if (!$ignorethemes) {
+            // Find the parent themes.
+            $parents = array();
+            if ($themename === $PAGE->theme->name) {
+                $parents = $PAGE->theme->parents;
+            } else {
+                $themeconfig = theme_config::load($themename);
+                $parents = $themeconfig->parents;
+            }
 
-        // First check the theme.
-        $dirs[] = $CFG->dirroot . '/theme/' . $themename . '/templates/' . $component . '/';
-        if (isset($CFG->themedir)) {
-            $dirs[] = $CFG->themedir . '/' . $themename . '/templates/' . $component . '/';
-        }
-        // Now check the parent themes.
-        // Search each of the parent themes second.
-        foreach ($parents as $parent) {
-            $dirs[] = $CFG->dirroot . '/theme/' . $parent . '/templates/' . $component . '/';
+            // First check the theme.
+            $dirs[] = $CFG->dirroot . '/theme/' . $themename . '/templates/' . $component . '/';
             if (isset($CFG->themedir)) {
-                $dirs[] = $CFG->themedir . '/' . $parent . '/templates/' . $component . '/';
+                $dirs[] = $CFG->themedir . '/' . $themename . '/templates/' . $component . '/';
+            }
+            // Now check the parent themes.
+            // Search each of the parent themes second.
+            foreach ($parents as $parent) {
+                $dirs[] = $CFG->dirroot . '/theme/' . $parent . '/templates/' . $component . '/';
+                if (isset($CFG->themedir)) {
+                    $dirs[] = $CFG->themedir . '/' . $parent . '/templates/' . $component . '/';
+                }
             }
         }
 
@@ -101,7 +104,11 @@ class mustache_template_finder {
      * @return string
      */
     public static function get_template_filepath($name, $themename = '') {
-        global $CFG, $PAGE;
+        $ignorethemes = false;
+        if (str_starts_with($name, '/')) {
+            $ignorethemes = true;
+            $name = substr($name, 1);
+        }
 
         if (strpos($name, '/') === false) {
             throw new coding_exception('Templates names must be specified as "componentname/templatename"' .
@@ -111,7 +118,7 @@ class mustache_template_finder {
         list($component, $templatename) = explode('/', $name, 2);
         $component = clean_param($component, PARAM_COMPONENT);
 
-        $dirs = self::get_template_directories_for_component($component, $themename);
+        $dirs = self::get_template_directories_for_component($component, $themename, $ignorethemes);
 
         foreach ($dirs as $dir) {
             $candidate = $dir . $templatename . '.mustache';
