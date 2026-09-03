@@ -1774,6 +1774,13 @@ function course_overviewfiles_options($course) {
 function create_course($data, $editoroptions = NULL) {
     global $DB, $CFG;
 
+    // Dispatch the hook for pre course create actions. This may change the course data.
+    di::get(hook\manager::class)->dispatch(
+        new \core_course\hook\before_course_created(
+            course: $data,
+        ),
+    );
+
     //check the categoryid - must be given for all new courses
     $category = $DB->get_record('course_categories', array('id'=>$data->category), '*', MUST_EXIST);
 
@@ -1905,10 +1912,6 @@ function create_course($data, $editoroptions = NULL) {
     $data->id = $course->id;
     $handler->instance_form_save($data, true);
 
-    di::get(hook\manager::class)->dispatch(
-        new \core_course\hook\after_form_submission($data, true),
-    );
-
     return $course;
 }
 
@@ -1932,6 +1935,17 @@ function update_course($data, $editoroptions = NULL) {
 
     $oldcourse = course_get_format($data->id)->get_course();
     $context   = context_course::instance($oldcourse->id);
+
+    // Dispatch the hook for pre course update actions. This may change the course data.
+    $oldid = $data->id;
+    $hook = new \core_course\hook\before_course_updated(
+        course: $data,
+        oldcourse: $oldcourse,
+    );
+    \core\di::get(\core\hook\manager::class)->dispatch($hook);
+    if ($data->id !== $oldid) {
+        throw new coding_exception('Course ID must not be changed in before_course_updated hook');
+    }
 
     // Make sure we're not changing whatever the course's relativedatesmode setting is.
     unset($data->relativedatesmode);
@@ -2023,10 +2037,6 @@ function update_course($data, $editoroptions = NULL) {
     // Update custom fields if there are any of them in the form.
     $handler = core_course\customfield\course_handler::create();
     $handler->instance_form_save($data);
-
-    di::get(hook\manager::class)->dispatch(
-        new \core_course\hook\after_form_submission($data),
-    );
 
     // Update with the new data
     $DB->update_record('course', $data);

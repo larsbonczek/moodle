@@ -19,24 +19,24 @@ namespace core_course\hook;
 /**
  * Allows plugins to extend course form submission.
  *
- * This is called on submission of the course edit form in AFTER the course has been saved. On course creation, the submitted data
- * includes the ID of the new course.
+ * This is called on submission of the course edit form in BEFORE the course has been saved. Changes to the submitted data will be
+ * reflected in the DB.
  *
  * @package    core_course
- * @copyright  2023 Dmitrii Metelkin <dmitriim@catalyst-au.net>
+ * @copyright  2026 Lars Bonczek (@innoCampus, TU Berlin)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-#[\core\attribute\label('Allows plugins or features to perform actions after the course editing form is saved')]
+#[\core\attribute\label('Allows plugins or features to perform actions before the course editing form is saved')]
 #[\core\attribute\tags('course')]
-class after_form_submission {
+class before_form_submission {
     /**
      * Creates new hook.
      *
-     * @param \stdClass $data Saved data
+     * @param \stdClass $data Submitted data
      * @param bool $isnewcourse Whether this is a new course
      */
     public function __construct(
-        /** @var \stdClass The data that was saved in the DB, including the course ID in the case of new courses */
+        /** @var \stdClass The data that was submitted in the course edit form */
         protected \stdClass $data,
         /** @var bool Whether this is a new course */
         public readonly bool $isnewcourse = false,
@@ -44,7 +44,7 @@ class after_form_submission {
     }
 
     /**
-     * Returns the data saved in the DB. In the case of new courses, this includes the course ID.
+     * Returns the submitted data. Changes to this object will be reflected in the DB.
      *
      * @return \stdClass
      */

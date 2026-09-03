@@ -155,8 +155,15 @@ if ($editform->is_cancelled()) {
     // The form has been cancelled, take them back to what ever the return to is.
     redirect($returnurl);
 } else if ($data = $editform->get_data()) {
+    $newcourse = empty($course->id);
+
+    // Call hook before form submission. This may change the submitted data.
+    \core\di::get(\core\hook\manager::class)->dispatch(
+        new \core_course\hook\before_form_submission($data, $newcourse),
+    );
+
     // Process data if submitted.
-    if (empty($course->id)) {
+    if ($newcourse) {
         // In creating the course.
         $course = create_course($data, $editoroptions);
 
@@ -186,6 +193,10 @@ if ($editform->is_cancelled()) {
         // Set the URL to take them too if they choose save and display.
         $courseurl = new moodle_url('/course/view.php', array('id' => $course->id));
     }
+
+    \core\di::get(\core\hook\manager::class)->dispatch(
+        new \core_course\hook\after_form_submission($data, $newcourse),
+    );
 
     if (isset($data->saveanddisplay)) {
         // Redirect user to newly created/updated course.

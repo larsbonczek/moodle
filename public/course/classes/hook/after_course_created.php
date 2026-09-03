@@ -23,6 +23,8 @@ use stdClass;
  *
  * This hook will be dispatched after the course is created and events are fired.
  *
+ * See {@see create_course()}.
+ *
  * @package    core_course
  * @copyright  2024 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

@@ -19,33 +19,28 @@ namespace core_course\hook;
 use stdClass;
 
 /**
- * Hook after course updates.
+ * Hook before course creation.
  *
- * This hook will be dispatched after the course is updated and events are fired.
+ * This hook will be dispatched before the course is created and events are fired. Changes to the course instance will be reflected
+ * in the database.
  *
- * See {@see update_course()}.
+ * See {@see create_course()}.
  *
  * @package    core_course
- * @copyright  2024 Safat Shahin <safat.shahin@moodle.com>
+ * @copyright  2026 Lars Bonczek (@innoCampus, TU Berlin)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-#[\core\attribute\label('Allows plugins or features to perform actions after a course is updated.')]
+#[\core\attribute\label('Allows plugins or features to perform actions before a course is created.')]
 #[\core\attribute\tags('course')]
-class after_course_updated {
+class before_course_created {
     /**
      * Constructor for the hook.
      *
      * @param stdClass $course The course instance.
-     * @param stdClass $oldcourse The old course instance.
-     * @param bool $changeincoursecat Whether the course category has changed.
      */
     public function __construct(
         /** @var stdClass The course instance */
         public readonly stdClass $course,
-        /** @var stdClass The old course instance */
-        public readonly stdClass $oldcourse,
-        /** @var bool Whether the course category has changed */
-        public readonly bool $changeincoursecat = false,
     ) {
     }
 }
