@@ -19,33 +19,29 @@ namespace core_course\hook;
 use stdClass;
 
 /**
- * Hook after course updates.
+ * Allows plugins to extend course form submission.
  *
- * This hook will be dispatched after the course is updated and events are fired.
- *
- * See {@see update_course()}.
+ * This is called on submission of the course form in BEFORE the course has been saved. Changes to the submitted data will be
+ * reflected in the DB.
  *
  * @package    core_course
- * @copyright  2024 Safat Shahin <safat.shahin@moodle.com>
+ * @copyright  2026 Lars Bonczek (@innoCampus, TU Berlin)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-#[\core\attribute\label('Allows plugins or features to perform actions after a course is updated.')]
+#[\core\attribute\label('Allows plugins or features to perform actions before the course editing form is saved')]
 #[\core\attribute\tags('course')]
-class after_course_updated {
+class before_form_saved {
     /**
-     * Constructor for the hook.
+     * Creates new hook.
      *
-     * @param stdClass $course The course instance.
-     * @param stdClass $oldcourse The old course instance.
-     * @param bool $changeincoursecat Whether the course category has changed.
+     * @param stdClass $data Submitted data.
+     * @param bool $isnewcourse Whether this is a new course.
      */
     public function __construct(
-        /** @var stdClass The updated course instance that was saved in the DB. */
-        public readonly stdClass $course,
-        /** @var stdClass The old course instance. */
-        public readonly stdClass $oldcourse,
-        /** @var bool Whether the course category has changed. */
-        public readonly bool $changeincoursecat = false,
+        /** @var stdClass The data that was submitted in the course form. Changes to this object will be reflected in the DB. */
+        public readonly stdClass $data,
+        /** @var bool Whether this is a new course. */
+        public readonly bool $isnewcourse = false,
     ) {
     }
 }

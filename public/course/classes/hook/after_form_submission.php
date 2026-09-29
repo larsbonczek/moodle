@@ -25,9 +25,11 @@ namespace core_course\hook;
  * @package    core_course
  * @copyright  2023 Dmitrii Metelkin <dmitriim@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated Since Moodle 5.3 MDL-89701. Use {@see after_form_saved} or one of the other core_course hooks.
  */
 #[\core\attribute\label('Allows plugins to extend saving of the course editing form')]
 #[\core\attribute\tags('course')]
+#[\core\attribute\deprecated(since: '5.3', mdl: 'MDL-89701')]
 class after_form_submission {
     /**
      * Creates new hook.

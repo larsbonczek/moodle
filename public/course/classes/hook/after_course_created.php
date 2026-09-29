@@ -23,6 +23,8 @@ use stdClass;
  *
  * This hook will be dispatched after the course is created and events are fired.
  *
+ * See {@see create_course()}.
+ *
  * @package    core_course
  * @copyright  2024 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -36,7 +38,7 @@ class after_course_created {
      * @param stdClass $course The course instance.
      */
     public function __construct(
-        /** @var stdClass The course instance */
+        /** @var stdClass The course instance that was saved in the DB. Includes the course ID. */
         public readonly stdClass $course,
     ) {
     }
