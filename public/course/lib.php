@@ -1777,6 +1777,26 @@ function create_course($data, $editoroptions = NULL) {
     //check the categoryid - must be given for all new courses
     $category = $DB->get_record('course_categories', array('id'=>$data->category), '*', MUST_EXIST);
 
+    // Check course field max length.
+    if (!empty($data->fullname) && core_text::strlen($data->fullname) > \core_course\constants::FULLNAME_MAXIMUM_LENGTH) {
+        throw new moodle_exception('coursefieldmaximumchars', '', '', [
+            'field' => 'fullname',
+            'maxchars' => \core_course\constants::FULLNAME_MAXIMUM_LENGTH,
+        ]);
+    }
+    if (!empty($data->shortname) && core_text::strlen($data->shortname) > \core_course\constants::SHORTNAME_MAXIMUM_LENGTH) {
+        throw new moodle_exception('coursefieldmaximumchars', '', '', [
+            'field' => 'shortname',
+            'maxchars' => \core_course\constants::SHORTNAME_MAXIMUM_LENGTH,
+        ]);
+    }
+    if (!empty($data->idnumber) && core_text::strlen($data->idnumber) > \core_course\constants::IDNUMBER_MAXIMUM_LENGTH) {
+        throw new moodle_exception('coursefieldmaximumchars', '', '', [
+            'field' => 'idnumber',
+            'maxchars' => \core_course\constants::IDNUMBER_MAXIMUM_LENGTH,
+        ]);
+    }
+
     // Check if the shortname already exists.
     if (!empty($data->shortname)) {
         if ($DB->record_exists('course', array('shortname' => $data->shortname))) {
@@ -1841,9 +1861,9 @@ function create_course($data, $editoroptions = NULL) {
         $DB->set_field('course', 'summary', $data->summary, array('id'=>$newcourseid));
         $DB->set_field('course', 'summaryformat', $data->summary_format, array('id'=>$newcourseid));
     }
-    if ($overviewfilesoptions = course_overviewfiles_options($newcourseid)) {
+    if ($ofoptions = course_overviewfiles_options($newcourseid)) {
         // Save the course overviewfiles
-        $data = file_postupdate_standard_filemanager($data, 'overviewfiles', $overviewfilesoptions, $context, 'course', 'overviewfiles', 0);
+        $data = file_postupdate_standard_filemanager($data, 'overviewfiles', $ofoptions, $context, 'course', 'overviewfiles', 0);
     }
 
     // update course format options
@@ -1958,11 +1978,24 @@ function update_course($data, $editoroptions = NULL) {
 
     $data->timemodified = time();
 
-    if ($editoroptions) {
-        $data = file_postupdate_standard_editor($data, 'summary', $editoroptions, $context, 'course', 'summary', 0);
+    // Check course field max length.
+    if (!empty($data->fullname) && core_text::strlen($data->fullname) > \core_course\constants::FULLNAME_MAXIMUM_LENGTH) {
+        throw new moodle_exception('coursefieldmaximumchars', '', '', [
+            'field' => 'fullname',
+            'maxchars' => \core_course\constants::FULLNAME_MAXIMUM_LENGTH,
+        ]);
     }
-    if ($overviewfilesoptions = course_overviewfiles_options($data->id)) {
-        $data = file_postupdate_standard_filemanager($data, 'overviewfiles', $overviewfilesoptions, $context, 'course', 'overviewfiles', 0);
+    if (!empty($data->shortname) && core_text::strlen($data->shortname) > \core_course\constants::SHORTNAME_MAXIMUM_LENGTH) {
+        throw new moodle_exception('coursefieldmaximumchars', '', '', [
+            'field' => 'shortname',
+            'maxchars' => \core_course\constants::SHORTNAME_MAXIMUM_LENGTH,
+        ]);
+    }
+    if (!empty($data->idnumber) && core_text::strlen($data->idnumber) > \core_course\constants::IDNUMBER_MAXIMUM_LENGTH) {
+        throw new moodle_exception('coursefieldmaximumchars', '', '', [
+            'field' => 'idnumber',
+            'maxchars' => \core_course\constants::IDNUMBER_MAXIMUM_LENGTH,
+        ]);
     }
 
     // Check we don't have a duplicate shortname.
@@ -1981,6 +2014,13 @@ function update_course($data, $editoroptions = NULL) {
 
     if ($errorcode = course_validate_dates((array)$data)) {
         throw new moodle_exception($errorcode);
+    }
+
+    if ($editoroptions) {
+        $data = file_postupdate_standard_editor($data, 'summary', $editoroptions, $context, 'course', 'summary', 0);
+    }
+    if ($ofoptions = course_overviewfiles_options($data->id)) {
+        $data = file_postupdate_standard_filemanager($data, 'overviewfiles', $ofoptions, $context, 'course', 'overviewfiles', 0);
     }
 
     if (!isset($data->category) or empty($data->category)) {

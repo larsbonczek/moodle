@@ -24,10 +24,13 @@ namespace core_course;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class constants {
-    /** @var int the length of the course.shortname field. */
+    /** @var int the length of the course.fullname field. */
     public const FULLNAME_MAXIMUM_LENGTH = 1333;
 
     /** @var int the length of the course.shortname field. */
     public const SHORTNAME_MAXIMUM_LENGTH = 255;
+
+    /** @var int the length of the course.idnumber field. */
+    public const IDNUMBER_MAXIMUM_LENGTH = 100;
 
 }

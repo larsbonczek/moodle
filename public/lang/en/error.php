@@ -199,6 +199,7 @@ $string['couldnotupdatenoexistinguser'] = 'Cannot update the user - user doesn\'
 $string['couldnotverifyagedigitalconsent'] = 'An error occurred while trying to verify the age of digital consent.<br />Please contact administrator.';
 $string['countriesphpempty'] = 'Error: The file countries.php in language pack {$a} is empty or missing.';
 $string['coursedoesnotbelongtocategory'] = 'The course doesn\'t belong to this category';
+$string['coursefieldmaximumchars'] = 'The {$a->field} field allows no more than {$a->maxchars} characters';
 $string['courseformatnotfound'] = 'The course format \'{$a}\' doesn\'t exist or is not recognised.';
 $string['coursegroupunknown'] = 'Course corresponding to group {$a} not specified';
 $string['courseidnotfound'] = 'The course ID doesn\'t exist.';

@@ -57,20 +57,22 @@ class course_edit_form extends moodleform {
         $mform->setType('returnurl', PARAM_LOCALURL);
         $mform->setConstant('returnurl', $returnurl->out_as_local_url());
 
-        $mform->addElement('text', 'fullname', get_string('fullnamecourse'),
-            ['maxlength' => \core_course\constants::FULLNAME_MAXIMUM_LENGTH, 'size' => 50]);
+        $fullnamemaxlength = \core_course\constants::FULLNAME_MAXIMUM_LENGTH;
+        $mform->addElement('text', 'fullname', get_string('fullnamecourse'), ['maxlength' => $fullnamemaxlength, 'size' => 50]);
         $mform->addHelpButton('fullname', 'fullnamecourse');
         $mform->addRule('fullname', get_string('missingfullname'), 'required', null, 'client');
+        $mform->addRule('fullname', get_string('maximumchars', '', $fullnamemaxlength), 'maxlength', $fullnamemaxlength);
         $mform->setType('fullname', PARAM_TEXT);
         if (!empty($course->id) and !has_capability('moodle/course:changefullname', $coursecontext)) {
             $mform->hardFreeze('fullname');
             $mform->setConstant('fullname', $course->fullname);
         }
 
-        $mform->addElement('text', 'shortname', get_string('shortnamecourse'),
-            ['maxlength' => \core_course\constants::SHORTNAME_MAXIMUM_LENGTH, 'size' => 20]);
+        $shortnamemaxlength = \core_course\constants::SHORTNAME_MAXIMUM_LENGTH;
+        $mform->addElement('text', 'shortname', get_string('shortnamecourse'), ['maxlength' => $shortnamemaxlength, 'size' => 20]);
         $mform->addHelpButton('shortname', 'shortnamecourse');
         $mform->addRule('shortname', get_string('missingshortname'), 'required', null, 'client');
+        $mform->addRule('shortname', get_string('maximumchars', '', $shortnamemaxlength), 'maxlength', $shortnamemaxlength);
         $mform->setType('shortname', PARAM_TEXT);
         if (!empty($course->id) and !has_capability('moodle/course:changeshortname', $coursecontext)) {
             $mform->hardFreeze('shortname');
@@ -192,9 +194,11 @@ class course_edit_form extends moodleform {
             $mform->addHelpButton('relativedatesmodegroup', 'relativedatesmode');
         }
 
-        $mform->addElement('text','idnumber', get_string('idnumbercourse'),'maxlength="100"  size="10"');
+        $idnumbermaxlength = \core_course\constants::IDNUMBER_MAXIMUM_LENGTH;
+        $mform->addElement('text', 'idnumber', get_string('idnumbercourse'), ['maxlength' => $idnumbermaxlength, 'size' => 10]);
         $mform->addHelpButton('idnumber', 'idnumbercourse');
         $mform->setType('idnumber', PARAM_RAW);
+        $mform->addRule('idnumber', get_string('maximumchars', '', $idnumbermaxlength), 'maxlength', $idnumbermaxlength);
         if (!empty($course->id) and !has_capability('moodle/course:changeidnumber', $coursecontext)) {
             $mform->hardFreeze('idnumber');
             $mform->setConstants('idnumber', $course->idnumber);

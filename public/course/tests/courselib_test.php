@@ -692,6 +692,68 @@ final class courselib_test extends advanced_testcase {
         }
     }
 
+    /**
+     * Test the create_course function with fields exceeding their maximum length.
+     */
+    public function test_create_course_maximum_field_length(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $defaultcategory = $DB->get_field_select('course_categories', 'MIN(id)', 'parent = 0');
+
+        $course = new stdClass();
+        $course->fullname = 'Test Course';
+        $course->shortname = 'test';
+        $course->idnumber = '1';
+        $course->format = 'topics';
+        $course->newsitems = 0;
+        $course->numsections = 5;
+        $course->category = $defaultcategory;
+
+        // Test fullname exceeding maximum length.
+        $course->fullname = str_repeat('a', \core_course\constants::FULLNAME_MAXIMUM_LENGTH + 1);
+        try {
+            create_course($course);
+            $this->fail('Expected exception when trying to create a course with fullname exceeding maximum length');
+        } catch (moodle_exception $e) {
+            $this->assertEquals(get_string('coursefieldmaximumchars', 'error', [
+                    'field' => 'fullname',
+                    'maxchars' => \core_course\constants::FULLNAME_MAXIMUM_LENGTH,
+            ]), $e->getMessage());
+        }
+        $course->fullname = 'Test Course';
+
+        // Test shortname exceeding maximum length.
+        $course->shortname = str_repeat('a', \core_course\constants::SHORTNAME_MAXIMUM_LENGTH + 1);
+        try {
+            create_course($course);
+            $this->fail('Expected exception when trying to create a course with shortname exceeding maximum length');
+        } catch (moodle_exception $e) {
+            $this->assertEquals(get_string('coursefieldmaximumchars', 'error', [
+                    'field' => 'shortname',
+                    'maxchars' => \core_course\constants::SHORTNAME_MAXIMUM_LENGTH,
+            ]), $e->getMessage());
+        }
+        $course->shortname = 'test';
+
+        // Test idnumber exceeding maximum length.
+        $course->idnumber = str_repeat('1', \core_course\constants::IDNUMBER_MAXIMUM_LENGTH + 1);
+        try {
+            create_course($course);
+            $this->fail('Expected exception when trying to create a course with idnumber exceeding maximum length');
+        } catch (moodle_exception $e) {
+            $this->assertEquals(get_string('coursefieldmaximumchars', 'error', [
+                    'field' => 'idnumber',
+                    'maxchars' => \core_course\constants::IDNUMBER_MAXIMUM_LENGTH,
+            ]), $e->getMessage());
+        }
+        $course->idnumber = '1';
+
+        // Verify that a normal create works.
+        create_course($course);
+    }
+
     public function test_create_course_with_generator(): void {
         global $DB;
         $this->resetAfterTest(true);
@@ -773,6 +835,70 @@ final class courselib_test extends advanced_testcase {
         } catch (moodle_exception $e) {
             $this->assertEquals(get_string('shortnametaken', 'error', $created2->shortname), $e->getMessage());
         }
+    }
+
+    /**
+     * Test the update_course function with fields exceeding their maximum length.
+     */
+    public function test_update_course_maximum_field_length(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $defaultcategory = $DB->get_field_select('course_categories', 'MIN(id)', 'parent = 0');
+
+        $course = new stdClass();
+        $course->fullname = 'Test Course';
+        $course->shortname = 'test';
+        $course->idnumber = '1';
+        $course->format = 'topics';
+        $course->newsitems = 0;
+        $course->numsections = 5;
+        $course->category = $defaultcategory;
+
+        create_course($course);
+
+        // Test fullname exceeding maximum length.
+        $course->fullname = str_repeat('a', \core_course\constants::FULLNAME_MAXIMUM_LENGTH + 1);
+        try {
+            update_course($course);
+            $this->fail('Expected exception when trying to update a course with fullname exceeding maximum length');
+        } catch (moodle_exception $e) {
+            $this->assertEquals(get_string('coursefieldmaximumchars', 'error', [
+                'field' => 'fullname',
+                'maxchars' => \core_course\constants::FULLNAME_MAXIMUM_LENGTH,
+            ]), $e->getMessage());
+        }
+        $course->fullname = 'Test Course';
+
+        // Test shortname exceeding maximum length.
+        $course->shortname = str_repeat('a', \core_course\constants::SHORTNAME_MAXIMUM_LENGTH + 1);
+        try {
+            update_course($course);
+            $this->fail('Expected exception when trying to update a course with shortname exceeding maximum length');
+        } catch (moodle_exception $e) {
+            $this->assertEquals(get_string('coursefieldmaximumchars', 'error', [
+                    'field' => 'shortname',
+                    'maxchars' => \core_course\constants::SHORTNAME_MAXIMUM_LENGTH,
+            ]), $e->getMessage());
+        }
+        $course->shortname = 'test';
+
+        // Test idnumber exceeding maximum length.
+        $course->idnumber = str_repeat('1', \core_course\constants::IDNUMBER_MAXIMUM_LENGTH + 1);
+        try {
+            update_course($course);
+            $this->fail('Expected exception when trying to update a course with idnumber exceeding maximum length');
+        } catch (moodle_exception $e) {
+            $this->assertEquals(get_string('coursefieldmaximumchars', 'error', [
+                'field' => 'idnumber',
+                'maxchars' => \core_course\constants::IDNUMBER_MAXIMUM_LENGTH,
+            ]), $e->getMessage());
+        }
+        $course->idnumber = '1';
+
+        // Validate that a normal update works.
+        update_course($course);
     }
 
     public function test_update_course_section_time_modified(): void {
